@@ -69,20 +69,25 @@ If WinActive("Outlook") {
         Send, ^+5
     return
 
-    ;Set Label Archiv - Baudienstleister
+    ;Set Label Archiv - PrP: Projekt Intern
     !Numpad7::
         Send, ^+6
     return
 
-    ;Set Label Service Enabling
+    ;Set Label PrP: Service Enabling
     !Numpad8::
         SEND, ^+7
+    return
+
+    ;Set Label PrP: Zurückgestellt
+    !Numpad9::
+        SEND, ^+9
     return
 }
 
 ; Open Downloads folder
 #+e::
-    Run "D:\File-Managment" ; ctrl+shift+d
+    GoTo_FileManagment()
 return
 
 ;Prepare PRP folder for commit
@@ -221,5 +226,17 @@ GoTo_Transaction(TCode, Modus, Execute)
     If (Execute = "Y")
     {
         Send {Enter}
+    }
+}
+
+GoTo_FileManagment()
+{
+    ; Work-Laptop
+    if (A_UserName = "Marklowski") {
+        Run "C:\File-Managment" ; ctrl+shift+d
+    }
+    ; Desktop-PC at Home
+    else if (A_UserName = "Home") {
+        Run "D:\File-Managment" ; ctrl+shift+d
     }
 }
