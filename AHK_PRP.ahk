@@ -24,8 +24,8 @@
 
 ;Hotkeys for CMDER
 #IfWinActive ahk_exe ConEmu64.exe
-    !Numpad1::Prepare_PrP_Commit()  ;Prepare PRP folder for commit
-    !Numpad2::Push_PrP_Pi()         ;Push to pi
+    !Numpad1::Prepare_Commit()  ;Prepare PRP folder for commit
+    !Numpad2::Push_Pi()         ;Push to pi
 
 ;Hotkeys for SAP
 #IfWinActive ahk_exe saplogon.exe
@@ -103,18 +103,16 @@ Switch_TaskBar()
 }
 
 ; Functions for CMDER Hotkeys
-Prepare_PrP_Commit()
+Prepare_Commit()
 {
-    Send, cd /mnt/d/file-managment/p/prp
+    Send, ga    
     Send, {Enter}
-    Send, git add .    
-    Send, {Enter}
-    Send, git commit -m "%A_YYYY%-%A_MM%-%A_DD%:    
+    Send, gc -m "%A_YYYY%-%A_MM%-%A_DD%:    
 }
 
-Push_PrP_Pi()
+Push_Pi()
 {
-    Send, git push pi master
+    Send, gpp master
     Send, {Enter}
 }
 
