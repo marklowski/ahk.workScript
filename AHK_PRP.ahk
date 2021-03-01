@@ -4,14 +4,19 @@
 ;   HOTKEYS
 ;
 
+; Gloabl Variables
+Outlook_TaskBar = 0
+Outlook_UnRead = 0
+Outlook_Calender = 0
+
 ; Open Downloads folder
 #+e::GoTo_FileManagment()
 
 ;Hotkeys for OUTLOOK
 #IfWinActive ahk_exe OUTLOOK.EXE
-    !NumpadEnter::Switch_TaskBar()  ;Switch between Email/ Calendar / Notes / ToDo's
-    !NumpadDot::Switch_Un_Read()    ;Switch between Read / Unread
-    !Numpad0::Switch_Calendar()     ;Switch between different Calendar Views
+    !NumpadEnter::Outlook_TaskBar:=Switch_TaskBar(Outlook_TaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
+    !NumpadDot::Outlook_UnRead:=Switch_Un_Read(Outlook_UnRead)      ;Switch between Read / Unread
+    !Numpad0::Outlook_Calender:=Switch_Calendar(Outlook_Calender)     ;Switch between different Calendar Views
     !Numpad1::Send, ^+1   ;Set Label Antworten
     !Numpad2::Send, ^+8   ;Set Label In Bearbeitung erwarten
     !Numpad3::Send, ^+2   ;Set Label Antwort erwarten
@@ -46,6 +51,15 @@
     ^Numpad5::GoTo_Transaction("se16n", "O", "Y")   ;Go To SE16N New Window
     ^Numpad6::GoTo_Transaction("", "O", "N")        ;Go To TCODE Search New Window
 
+;Hotkeys for Eclipse
+#IfWinActive ahk_exe eclipse.exe    
+    !Numpad1::Send, ^{F2}   ;Check Syntax
+    !Numpad2::Send, +{F1}   ;Run Pretty Printer
+    !Numpad3::Send, ^+{F3}   ;Activate Code
+    !Numpad4::Send, ^7   ;Change between Commented & Uncommented
+    !Numpad7::Send, !B ;Set Soft Breakpoint
+    !Numpad8::Send, ^!B  ;Set Break-Point
+
 ;
 ;   FUNCTIONS
 ;
@@ -62,31 +76,7 @@ GoTo_FileManagment()
 }
 
 ; Functions for OUTLOOK Hotkeys
-Switch_Calendar()
-{
-    cntr_Views++
-    if cntr_Views = 1
-        Send, ^!2
-    else if cntr_Views = 2
-    {
-        Send, ^!4
-        cntr_Views = 0
-    }
-}
-
-Switch_Un_Read()
-{
-    counter++
-    if counter = 1
-        Send, ^U
-    else if counter = 2
-    {
-        Send, ^O
-        counter = 0
-    }
-}
-
-Switch_TaskBar()
+Switch_TaskBar(cntr_Taskbar)
 {
     cntr_Taskbar++
     if cntr_Taskbar = 1
@@ -100,6 +90,36 @@ Switch_TaskBar()
         Send, ^4
         cntr_Taskbar = 0
     }
+    
+    return cntr_Taskbar
+}
+
+Switch_Un_Read(counter)
+{
+    counter++
+    if counter = 1
+        Send, ^U
+    else if counter = 2
+    {
+        Send, ^O
+        counter = 0
+    }
+
+    return counter
+}
+
+Switch_Calendar(cntr_Views)
+{
+    cntr_Views++
+    if cntr_Views = 1
+        Send, ^!2
+    else if cntr_Views = 2
+    {
+        Send, ^!4
+        cntr_Views = 0
+    }
+
+    return cntr_Views
 }
 
 ; Functions for CMDER Hotkeys
