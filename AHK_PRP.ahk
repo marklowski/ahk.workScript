@@ -8,15 +8,18 @@
 Outlook_TaskBar = 0
 Outlook_UnRead = 0
 Outlook_Calender = 0
+SAP_VersionMain = 0
+SAP_VersionSub = 0
 
-; Open Downloads folder
-#+e::GoTo_FileManagment()
+#+e::GoTo_FileManagment()   ; Open Downloads folder
+!Numpad1::Run, saplogon.exe
+!Numpad2::Run, C:\Users\Home\eclipse\java-2020-12\eclipse\eclipse.exe
 
 ;Hotkeys for OUTLOOK
 #IfWinActive ahk_exe OUTLOOK.EXE
-    !NumpadEnter::Outlook_TaskBar:=Switch_TaskBar(Outlook_TaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
-    !NumpadDot::Outlook_UnRead:=Switch_Un_Read(Outlook_UnRead)      ;Switch between Read / Unread
-    !Numpad0::Outlook_Calender:=Switch_Calendar(Outlook_Calender)     ;Switch between different Calendar Views
+    !NumpadEnter::Switch_TaskBar(Outlook_TaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
+    !NumpadDot::Switch_Un_Read(Outlook_UnRead)      ;Switch between Read / Unread
+    !Numpad0::Switch_Calendar(Outlook_Calender)     ;Switch between different Calendar Views
     !Numpad1::Send, ^+1   ;Set Label Antworten
     !Numpad2::Send, ^+8   ;Set Label In Bearbeitung erwarten
     !Numpad3::Send, ^+2   ;Set Label Antwort erwarten
@@ -26,11 +29,6 @@ Outlook_Calender = 0
     !Numpad7::Send, ^+6   ;Set Label Archiv - PrP: Projekt Intern
     !Numpad8::SEND, ^+7   ;Set Label PrP: Service Enabling
     !Numpad9::SEND, ^+9   ;Set Label PrP: Zurückgestellt
-
-;Hotkeys for CMDER
-#IfWinActive ahk_exe ConEmu64.exe
-    !Numpad1::Prepare_Commit()  ;Prepare PRP folder for commit
-    !Numpad2::Push_Pi()         ;Push to pi
 
 ;Hotkeys for SAP
 #IfWinActive ahk_exe saplogon.exe
@@ -43,6 +41,10 @@ Outlook_Calender = 0
     !Numpad7::Send, ^+{F12} ;Set Session Break-Point
     !Numpad8::Send, ^+{F9}  ;Set External Break-Point
     !Numpad9::Send, ^+{F5}  ;Set Objectlist
+    !NumpadDiv::Send_Header("H", SAP_VersionMain, SAP_VersionSub)    ;Set Abap Header
+    !NumpadMult::Send_Header("E", SAP_VersionMain, SAP_VersionSub)   ;Set Abap Header-Entry
+    !NumpadSub::SAP_VersionMain:=SAP_VersionMain+1
+    !NumpadAdd::SAP_VersionSub:=SAP_VersionSub+1
     ^Numpad0::GoTo_Transaction("ex", "N", "Y")      ;Close all Windows for MANDT
     ^Numpad1::GoTo_Transaction("se80", "N", "Y")    ;Go To SE80 Same Window
     ^Numpad2::GoTo_Transaction("se16n", "N", "Y")   ;Go To SE16N Same Window
@@ -76,66 +78,45 @@ GoTo_FileManagment()
 }
 
 ; Functions for OUTLOOK Hotkeys
-Switch_TaskBar(cntr_Taskbar)
+Switch_TaskBar(ByRef Outlook_TaskBar)
 {
-    cntr_Taskbar++
-    if cntr_Taskbar = 1
+    Outlook_TaskBar++
+    if Outlook_TaskBar = 1
         Send, ^1
-    else if cntr_Taskbar = 2
+    else if Outlook_TaskBar = 2
         Send, ^2
-    else if cntr_Taskbar = 3
+    else if Outlook_TaskBar = 3
         Send,  ^5
-    else if cntr_Taskbar = 4
+    else if Outlook_TaskBar = 4
     {
         Send, ^4
-        cntr_Taskbar = 0
+        Outlook_TaskBar = 0
     }
-    
-    return cntr_Taskbar
 }
 
-Switch_Un_Read(counter)
+Switch_Un_Read(ByRef Outlook_UnRead)
 {
-    counter++
-    if counter = 1
+    Outlook_UnRead++
+    if Outlook_UnRead = 1
         Send, ^U
-    else if counter = 2
+    else if Outlook_UnRead = 2
     {
         Send, ^O
-        counter = 0
+        Outlook_UnRead = 0
     }
-
-    return counter
 }
 
-Switch_Calendar(cntr_Views)
+Switch_Calendar(ByRef Outlook_Calender)
 {
-    cntr_Views++
-    if cntr_Views = 1
+    Outlook_Calender++
+    if Outlook_Calender = 1
         Send, ^!2
-    else if cntr_Views = 2
+    else if Outlook_Calender = 2
     {
         Send, ^!4
-        cntr_Views = 0
+        Outlook_Calender = 0
     }
-
-    return cntr_Views
 }
-
-; Functions for CMDER Hotkeys
-Prepare_Commit()
-{
-    Send, ga    
-    Send, {Enter}
-    Send, gc -m "%A_YYYY%-%A_MM%-%A_DD%:    
-}
-
-Push_Pi()
-{
-    Send, gpp master
-    Send, {Enter}
-}
-
 
 ;Functions for SAP Hotkeys
 GoTo_Transaction(TCode, Modus, Execute) 
@@ -162,4 +143,52 @@ GoTo_Transaction(TCode, Modus, Execute)
     {
         Send {Enter}
     }
+}
+
+;Functions for Header Texts
+Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
+{
+    ClipSaved := ClipboardAll
+    FormatTime, CurrentDateTime,, dd.MM.yyyy
+    clipboard := ""    
+    if (Modus = "H")
+    {
+        clipboard = 
+        (
+************************************************************************
+* Author:     Marklowski                                               *
+* Company:    PrP Project People GmbH                                  *
+* Date:       %CurrentDateTime%                                               *
+************************************************************************
+* Functionality:
+* 
+*
+************************************************************************
+* History                                                              *
+* Ver   Date        Author      Changes                                *
+* 1.0   %CurrentDateTime%  Marklowski  First version                          *
+************************************************************************
+        )
+    }
+    else if (Modus = "E")
+    {
+        if(SAP_VersionMain = 0)
+            SAP_VersionMain = 1
+        
+        clipboard =
+        (
+            * %SAP_VersionMain%.%SAP_VersionSub%   %CurrentDateTime%  Marklowski  *
+        )
+    }
+
+    ClipWait, 2    
+    if (!ErrorLevel)
+        Send, ^v
+    
+    Sleep, 300
+    clipboard := ClipSaved
+    ClipSaved = ""
+    SAP_VersionMain = 0
+    SAP_VersionSub = 0
+    return
 }
