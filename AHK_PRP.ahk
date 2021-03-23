@@ -12,8 +12,8 @@ SAP_VersionMain = 0
 SAP_VersionSub = 0
 
 #+e::GoTo_FileManagment()   ; Open Downloads folder
-!Numpad1::Run, saplogon.exe
-!Numpad2::Run, C:\Users\Home\eclipse\java-2020-12\eclipse\eclipse.exe
+!Numpad1::Launch_Programs("SAP")
+!Numpad2::Launch_Programs("ECLIPSE")
 
 ;Hotkeys for OUTLOOK
 #IfWinActive ahk_exe OUTLOOK.EXE
@@ -76,7 +76,33 @@ GoTo_FileManagment()
         Run "D:\File-Managment" ; ctrl+shift+d
     }
 }
-
+Launch_Programs(Program)
+{
+    ; Work-Laptop
+    if (A_UserName = "Marklowski") {
+        switch Program
+        {
+            case "SAP":
+                Run, saplogon.exe
+                return
+            case "ECLIPSE":
+                Run, C:\Users\Marklowski\eclipse\java-2020-06\eclipse\eclipse.exe
+                return
+        }        
+    }
+    ; Desktop-PC at Home
+    else if (A_UserName = "Home") {
+        switch Program
+        {
+            case "SAP":
+                Run, saplogon.exe
+                return
+            case "ECLIPSE":
+                Run, C:\Users\Home\eclipse\java-2020-12\eclipse\eclipse.exe
+                return
+        }
+    }
+}
 ; Functions for OUTLOOK Hotkeys
 Switch_TaskBar(ByRef Outlook_TaskBar)
 {
