@@ -14,6 +14,8 @@ SAP_VersionSub = 0
 #+e::GoTo_FileManagment()   ; Open Downloads folder
 !Numpad1::Launch_Programs("SAP")
 !Numpad2::Launch_Programs("ECLIPSE")
+!Numpad3::Launch_Programs("WORKSPACE1")
+!Numpad4::Launch_Programs("WORKSPACE2")
 
 ;Hotkeys for OUTLOOK
 #IfWinActive ahk_exe OUTLOOK.EXE
@@ -64,16 +66,23 @@ SAP_VersionSub = 0
 
 ;
 ;   FUNCTIONS
-;
+;x
 GoTo_FileManagment()
 {
     ; Work-Laptop
     if (A_UserName = "Marklowski") {
         Run "C:\File-Managment" ; ctrl+shift+d
+        return
     }
     ; Desktop-PC at Home
     else if (A_UserName = "Home") {
         Run "D:\File-Managment" ; ctrl+shift+d
+        return
+    }
+    ; Ralf Work-Laptop
+    else if (A_UserName = "ralfs") {
+        Run "C:\Users\%A_UserName%\Documents" ; ctrl+shift+d
+        return
     }
 }
 Launch_Programs(Program)
@@ -82,25 +91,47 @@ Launch_Programs(Program)
     if (A_UserName = "Marklowski") {
         switch Program
         {
-            case "SAP":
-                Run, saplogon.exe
-                return
             case "ECLIPSE":
-                Run, C:\Users\Marklowski\eclipse\java-2020-06\eclipse\eclipse.exe
-                return
-        }        
+                eclipseVersion=java-2020-06
+            case "WORKSPACE1":
+                WS1Path=C:\File-Managment\V\visual-studio-code\prp.code-workspace
+        }
     }
     ; Desktop-PC at Home
     else if (A_UserName = "Home") {
         switch Program
         {
-            case "SAP":
-                Run, saplogon.exe
-                return
             case "ECLIPSE":
-                Run, C:\Users\Home\eclipse\java-2020-12\eclipse\eclipse.exe
-                return
+                eclipseVersion=java-2020-12
         }
+    }
+    ; Ralf Work-Laptop
+    else if (A_UserName = "ralfs") {
+        switch Program
+        {
+            case "ECLIPSE":
+                eclipseVersion=java-2020-12
+            case "WORKSPACE1":
+                WS1Path=C:\Users\ralfs\Desktop\VS Code Workspaces\FfrontEnd.code-workspace                
+            case "WORKSPACE2":
+                WS2Path=C:\Users\ralfs\Desktop\VS Code Workspaces\All_VS_Code.code-workspace
+        }
+    }
+
+    switch Program
+    {
+        case "SAP":
+            Run, saplogon.exe
+            return
+        case "ECLIPSE":
+            Run, C:\Users\%A_UserName%\eclipse\%eclipseVersion%\eclipse\eclipse.exe
+            return
+        case "WORKSPACE1":
+            Run, %WS1Path%
+            return
+        case "WORKSPACE2":
+            Run, %WS2Path%
+            return
     }
 }
 ; Functions for OUTLOOK Hotkeys
