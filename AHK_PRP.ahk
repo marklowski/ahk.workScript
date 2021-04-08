@@ -11,6 +11,9 @@ Outlook_Calender = 0
 SAP_VersionMain = 0
 SAP_VersionSub = 0
 
+;check / create config file
+Initialize_Script()
+
 #+e::GoTo_FileManagment()   ; Open Downloads folder
 !Numpad1::Launch_Programs("SAP")
 !Numpad2::Launch_Programs("ECLIPSE")
@@ -67,69 +70,57 @@ SAP_VersionSub = 0
 ;
 ;   FUNCTIONS
 ;
-GoTo_FileManagment()
+Initialize_Script()
 {
-    ; Work-Laptop
-    if (A_UserName = "Marklowski") {
-        Run "C:\File-Managment" ; ctrl+shift+d
-        return
-    }
-    ; Desktop-PC at Home
-    else if (A_UserName = "Home") {
-        Run "D:\File-Managment" ; ctrl+shift+d
-        return
-    }
-    ; Ralf Work-Laptop
-    else if (A_UserName = "ralfs") {
-        Run "C:\Users\%A_UserName%\Documents" ; ctrl+shift+d
-        return
+    if !FileExist( "Config.txt" ) {
+        FileAppend, FileManagment=`nEclipseVersion=`nVisualStudioWorkspace1=`nVisualStudioWorkspace2=`n, %A_WorkingDir%\Config.txt
+
+        MsgBox, 4, Config File was created,  Open Config File Folder?        
+        IfMsgBox, Yes
+            Run "%A_WorkingDir%"
     }
 }
-Launch_Programs(Program)
+
+Read_Config(Setting)
 {
-    ; Work-Laptop
-    if (A_UserName = "Marklowski") {
-        switch Program
+    SearchString := Setting
+    Loop, read, Config.txt
+    {
+        if InStr(A_LoopReadLine, SearchString)
         {
-            case "ECLIPSE":
-                eclipseVersion=java-2020-06
-            case "WORKSPACE1":
-                WS1Path=C:\File-Managment\V\visual-studio-code\prp.code-workspace
-        }
-    }
-    ; Desktop-PC at Home
-    else if (A_UserName = "Home") {
-        switch Program
-        {
-            case "ECLIPSE":
-                eclipseVersion=java-2020-12
-        }
-    }
-    ; Ralf Work-Laptop
-    else if (A_UserName = "ralfs") {
-        switch Program
-        {
-            case "ECLIPSE":
-                eclipseVersion=java-2020-12
-            case "WORKSPACE1":
-                WS1Path=C:\Users\ralfs\Desktop\VS Code Workspaces\FfrontEnd.code-workspace                
-            case "WORKSPACE2":
-                WS2Path=C:\Users\ralfs\Desktop\VS Code Workspaces\All_VS_Code.code-workspace
+            FileLine := A_LoopReadLine
+            break
         }
     }
 
+    FileLineParts := StrSplit(FileLine, "=")
+    return FileLineParts[2]
+}
+
+GoTo_FileManagment()
+{
+    Config := Read_Config("FileManagment")
+    Run %Config%
+    return
+}
+
+Launch_Programs(Program)
+{
     switch Program
     {
         case "SAP":
             Run, saplogon.exe
             return
         case "ECLIPSE":
+            eclipseVersion := Read_Config("EclipseVersion")
             Run, C:\Users\%A_UserName%\eclipse\%eclipseVersion%\eclipse\eclipse.exe
             return
         case "WORKSPACE1":
+            WS1Path := Read_Config("VisualStudioWorkspace1")
             Run, %WS1Path%
             return
         case "WORKSPACE2":
+            WS2Path := Read_Config("VisualStudioWorkspace2")
             Run, %WS2Path%
             return
     }

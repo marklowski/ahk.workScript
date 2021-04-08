@@ -1,0 +1,4 @@
+FileManagment=D:\File-Managment
+EclipseVersion=java-2020-12
+VisualStudioWorkspace1=D:\File-Managment\V\visual-studio-code\prp.code-workspace
+VisualStudioWorkspace2=
