@@ -25,15 +25,15 @@ Initialize_Script()
     !NumpadEnter::Switch_TaskBar(Outlook_TaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
     !NumpadDot::Switch_Un_Read(Outlook_UnRead)      ;Switch between Read / Unread
     !Numpad0::Switch_Calendar(Outlook_Calender)     ;Switch between different Calendar Views
-    !Numpad1::Send, ^+1   ;Set Label Antworten
-    !Numpad2::Send, ^+8   ;Set Label In Bearbeitung erwarten
-    !Numpad3::Send, ^+2   ;Set Label Antwort erwarten
-    !Numpad4::Send, ^+3   ;Set Label Archiv - Random
-    !Numpad5::Send, ^+4   ;Set Label Archiv - Tosca
-    !Numpad6::Send, ^+5   ;Set Label Archiv - Gehalt
-    !Numpad7::Send, ^+6   ;Set Label Archiv - PrP: Projekt Intern
-    !Numpad8::SEND, ^+7   ;Set Label PrP: Service Enabling
-    !Numpad9::SEND, ^+9   ;Set Label PrP: Zurückgestellt
+    !Numpad1::Send, ^+1   ;Move eMail to specific Outlook Directory
+    !Numpad3::Send, ^+2   ;Move eMail to specific Outlook Directory
+    !Numpad4::Send, ^+3   ;Move eMail to specific Outlook Directory
+    !Numpad5::Send, ^+4   ;Move eMail to specific Outlook Directory
+    !Numpad6::Send, ^+5   ;Move eMail to specific Outlook Directory
+    !Numpad7::Send, ^+6   ;Move eMail to specific Outlook Directory
+    !Numpad8::SEND, ^+7   ;Move eMail to specific Outlook Directory
+    !Numpad2::Send, ^+8   ;Move eMail to specific Outlook Directory
+    !Numpad9::SEND, ^+9   ;Move eMail to specific Outlook Directory
 
 ;Hotkeys for SAP
 #IfWinActive ahk_exe saplogon.exe
@@ -72,6 +72,15 @@ Initialize_Script()
 ;
 Initialize_Script()
 {
+
+    if !FileExist( "sapHeader.txt" ) {
+        FileAppend, `n, %A_WorkingDir%\sapHeader.txt
+    }
+
+    if !FileExist( "sapSubHeader.txt" ) {
+        FileAppend, `n, %A_WorkingDir%\sapSubHeader.txt
+    }
+
     if !FileExist( "Config.txt" ) {
         FileAppend, FileManagment=`nEclipseVersion=`nVisualStudioWorkspace1=`nVisualStudioWorkspace2=`n, %A_WorkingDir%\Config.txt
 
@@ -196,37 +205,24 @@ GoTo_Transaction(TCode, Modus, Execute)
 ;Functions for Header Texts
 Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
 {
-    ClipSaved := ClipboardAll
     FormatTime, CurrentDateTime,, dd.MM.yyyy
     clipboard := ""    
     if (Modus = "H")
     {
-        clipboard = 
-        (
-************************************************************************
-* Author:     Marklowski                                               *
-* Company:    PrP Project People GmbH                                  *
-* Date:       %CurrentDateTime%                                               *
-************************************************************************
-* Functionality:
-* 
-*
-************************************************************************
-* History                                                              *
-* Ver   Date        Author      Changes                                *
-* 1.0   %CurrentDateTime%  Marklowski  First version                          *
-************************************************************************
-        )
+        FileRead, clipboard, sapHeader.txt
+        StringReplace, clipboard, clipboard, ##CurrentDateTime, %CurrentDateTime%, All
     }
     else if (Modus = "E")
     {
         if(SAP_VersionMain = 0)
             SAP_VersionMain = 1
         
-        clipboard =
-        (
-            * %SAP_VersionMain%.%SAP_VersionSub%   %CurrentDateTime%  Marklowski  *
-        )
+        FileRead, clipboard, sapSubHeader.txt
+        StringReplace, clipboard, clipboard, ##CurrentDateTime, %CurrentDateTime%, All
+;        clipboard =
+;        (
+;            * %SAP_VersionMain%.%SAP_VersionSub%   %CurrentDateTime%  Marklowski  *
+;        )
     }
 
     ClipWait, 2    
@@ -234,8 +230,6 @@ Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
         Send, ^v
     
     Sleep, 300
-    clipboard := ClipSaved
-    ClipSaved = ""
     SAP_VersionMain = 0
     SAP_VersionSub = 0
     return
