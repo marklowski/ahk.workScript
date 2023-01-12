@@ -219,10 +219,8 @@ Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
         
         FileRead, clipboard, sapSubHeader.txt
         StringReplace, clipboard, clipboard, ##CurrentDateTime, %CurrentDateTime%, All
-;        clipboard =
-;        (
-;            * %SAP_VersionMain%.%SAP_VersionSub%   %CurrentDateTime%  Marklowski  *
-;        )
+        StringReplace, clipboard, clipboard, ##MainVersion, %SAP_VersionMain%, All
+        StringReplace, clipboard, clipboard, ##SubVersion, %SAP_VersionSub%, All
     }
 
     ClipWait, 2    
