@@ -59,3 +59,72 @@
 - ALT+7:        Send CTRL+7, can be used to move eMails to specific folders
 - ALT+8:        Send CTRL+8, can be used to move eMails to specific folders
 - ALT+9:        Send CTRL+9, can be used to move eMails to specific folders
+
+## Config Files
+
+Die Dateien befinden sich innerhalb der autoHotKey.exe, und es gibt momentan 3 verschiedene Dateien.
+
+### General Settings - Config.txt
+
+Die möglichen Allgemeinen Einstellungen lauten wie folgt:
+
+- **invertTCode: (Yes/No)** Mithilfe dieser Option kann man innerhalb die SAP Shortcuts für neues Fenster / gleiches Fenster invertieren
+- **fileManagment:** Mithilfe dieser Einstellung kann man einen bestimmten Ordner direkt aufrufen.
+- **eclipseVersion:** Wird benötigt damit die korrekte Eclipse Version gestartet wird.
+- **visualStudioWorkspace1:** Mithilfe dieser Option ist man in der Lage einen Visual Studio Code Workspace aufzurufen.
+- **visualStudioWorkspace2:** Mithilfe dieser Option ist man in der Lage einen Visual Studio Code Workspace aufzurufen.
+
+Beispiel Config.txt
+
+```ini
+    invertTCode=No
+    fileManagment=C:\file.managment
+    eclipseVersion=platform-2022-12
+    visualStudioWorkspace1=C:\file.managment\v\visual-studio-code\prp.code-workspace
+    visualStudioWorkspace2=C:\file.managment\v\visual-studio-code\flexus.code-workspace
+```
+
+## SAP Header Settings - sapHeader.txt
+
+Mithilfe dieser Datei kann der gewünschte SAP Standard Header Dynamisch hinzugefügt werden.
+Hierzu gibt es eine extra Optionen:
+
+- **##CurrentDateTime**: Diese kann verwendet werden um das aktuelle Datum hinzuzufügen (dd-MM-yyyy)
+
+Beispiel sapHeader.txt:
+
+```ini
+*<D>-------------------------------------------------------------------
+* Autor.........: Philipp von Marklowski
+* Firma.........: Flexus AG
+* Angelegt am...: ##CurrentDateTime
+*----------------------------------------------------------------------
+* Beschreibung:
+*
+*----------------------------------------------------------------------
+* Datum       Autor     Info
+*----------------------------------------------------------------------
+*
+*</D>------------------------------------------------------------------
+```
+
+## SAP Sub Header Settings - sapSubHeader.txt
+
+Abschließende gibt es noch die sapSubHeader Datei, mithilfe dieser Datei kann der gewünschte SAP Sub Header Dynamisch hinzugefügt werden.
+Hierzu gibt es auch extra Optionen:
+
+- **##CurrentDateTime**: Diese kann verwendet werden um das aktuelle Datum hinzuzufügen (dd-MM-yyyy)
+- **##MainVersion**: Dadurch kann man eine Haupt Version hinzufügen.
+- **##SubVersion**: Dadurch kann man eine Sub Version hinzufügen.
+
+Beispiel sapSubHeader.txt 1:
+
+```ini
+* ##CurrentDateTime  PVM
+```
+
+Beispiel sapSubHeader.txt 2:
+
+```ini
+* ##MainVersion.##SubVersion   ##CurrentDateTime  PVM
+```
