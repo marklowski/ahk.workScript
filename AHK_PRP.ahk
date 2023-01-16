@@ -12,19 +12,19 @@ MainVersion = 0
 SubVersion = 0
 
 ;check / create config file
-Initialize_Script()
+initializeScript()
 
-#+e::GoTo_FileManagment()   ; Open Downloads folder
-!Numpad1::Launch_Programs("SAP")
-!Numpad2::Launch_Programs("ECLIPSE")
-!Numpad3::Launch_Programs("WORKSPACE1")
-!Numpad4::Launch_Programs("WORKSPACE2")
+#+e::goToFileManagment()   ; Open Downloads folder
+!Numpad1::launchPrograms("SAP")
+!Numpad2::launchPrograms("ECLIPSE")
+!Numpad3::launchPrograms("WORKSPACE1")
+!Numpad4::launchPrograms("WORKSPACE2")
 
 ;Hotkeys for OUTLOOK
 #IfWinActive ahk_exe OUTLOOK.EXE
-    !NumpadEnter::Switch_TaskBar(OutlookTaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
-    !NumpadDot::Switch_Un_Read(OutlookUnRead)      ;Switch between Read / Unread
-    !Numpad0::Switch_Calendar(OutlookCalender)     ;Switch between different Calendar Views
+    !NumpadEnter::switchTaskBar(OutlookTaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
+    !NumpadDot::switchUnRead(OutlookUnRead)      ;Switch between Read / Unread
+    !Numpad0::switchCalendar(OutlookCalender)     ;Switch between different Calendar Views
     !Numpad1::Send, ^+1   ;Move eMail to specific Outlook Directory
     !Numpad2::Send, ^+2   ;Move eMail to specific Outlook Directory
     !Numpad3::Send, ^+3   ;Move eMail to specific Outlook Directory
@@ -46,17 +46,17 @@ Initialize_Script()
     !Numpad7::Send, ^+{F12} ;Set Session Break-Point
     !Numpad8::Send, ^+{F9}  ;Set External Break-Point
     !Numpad9::Send, ^+{F5}  ;Set Objectlist
-    !NumpadDiv::Send_Header("H", MainVersion, SubVersion)    ;Set Abap Header
-    !NumpadMult::Send_Header("E", MainVersion, SubVersion)   ;Set Abap Header-Entry
+    !NumpadDiv::sendHeader("H", MainVersion, SubVersion)    ;Set Abap Header
+    !NumpadMult::sendHeader("E", MainVersion, SubVersion)   ;Set Abap Header-Entry
     !NumpadSub::MainVersion:=MainVersion+1
     !NumpadAdd::SubVersion:=SubVersion+1
-    ^Numpad0::GoTo_Transaction("ex", "N", "Y")      ;Close all Windows for MANDT
-    ^Numpad1::GoTo_Transaction("se80", "N", "Y")    ;Go To SE80 Same Window
-    ^Numpad2::GoTo_Transaction("se16n", "N", "Y")   ;Go To SE16N Same Window
-    ^Numpad3::GoTo_Transaction("", "N", "N")        ;Go To TCODE Search Same Window
-    ^Numpad4::GoTo_Transaction("se80", "O", "Y")    ;Go To SE80 New Window
-    ^Numpad5::GoTo_Transaction("se16n", "O", "Y")   ;Go To SE16N New Window
-    ^Numpad6::GoTo_Transaction("", "O", "N")        ;Go To TCODE Search New Window
+    ^Numpad0::goToTransaction("ex", "N", "Y")      ;Close all Windows for MANDT
+    ^Numpad1::goToTransaction("se80", "N", "Y")    ;Go To SE80 Same Window
+    ^Numpad2::goToTransaction("se16n", "N", "Y")   ;Go To SE16N Same Window
+    ^Numpad3::goToTransaction("", "N", "N")        ;Go To TCODE Search Same Window
+    ^Numpad4::goToTransaction("se80", "O", "Y")    ;Go To SE80 New Window
+    ^Numpad5::goToTransaction("se16n", "O", "Y")   ;Go To SE16N New Window
+    ^Numpad6::goToTransaction("", "O", "N")        ;Go To TCODE Search New Window
 
 ;Hotkeys for Eclipse
 #IfWinActive ahk_exe eclipse.exe    
@@ -70,7 +70,7 @@ Initialize_Script()
 ;
 ;   FUNCTIONS
 ;
-Initialize_Script()
+initializeScript()
 {
 
     if !FileExist( "sapHeader.txt" ) {
@@ -90,7 +90,7 @@ Initialize_Script()
     }
 }
 
-Read_Config(Setting)
+readConfigParameter(Setting)
 {
     SearchString := Setting
     Loop, read, Config.txt
@@ -106,14 +106,14 @@ Read_Config(Setting)
     return FileLineParts[2]
 }
 
-GoTo_FileManagment()
+goToFileManagment()
 {
     Config := Read_Config("FileManagment")
     Run %Config%
     return
 }
 
-Launch_Programs(Program)
+launchPrograms(Program)
 {
     switch Program
     {
@@ -135,7 +135,7 @@ Launch_Programs(Program)
     }
 }
 ; Functions for OUTLOOK Hotkeys
-Switch_TaskBar(ByRef OutlookTaskBar)
+switchTaskBar(ByRef OutlookTaskBar)
 {
     OutlookTaskBar++
     if OutlookTaskBar = 1
@@ -151,7 +151,7 @@ Switch_TaskBar(ByRef OutlookTaskBar)
     }
 }
 
-Switch_Un_Read(ByRef OutlookUnRead)
+switchUnRead(ByRef OutlookUnRead)
 {
     OutlookUnRead++
     if OutlookUnRead = 1
@@ -163,7 +163,7 @@ Switch_Un_Read(ByRef OutlookUnRead)
     }
 }
 
-Switch_Calendar(ByRef OutlookCalender)
+switchCalendar(ByRef OutlookCalender)
 {
     OutlookCalender++
     if OutlookCalender = 1
@@ -176,7 +176,7 @@ Switch_Calendar(ByRef OutlookCalender)
 }
 
 ;Functions for SAP Hotkeys
-GoTo_Transaction(TCode, Modus, Execute) 
+goToTransaction(TCode, Modus, Execute) 
 {
     ;Select TCODE SearchBar
     Send, ^+7
@@ -203,7 +203,7 @@ GoTo_Transaction(TCode, Modus, Execute)
 }
 
 ;Functions for Header Texts
-Send_Header(Modus, byref MainVersion, byref SubVersion)
+sendHeader(Modus, byref MainVersion, byref SubVersion)
 {
     FormatTime, CurrentDateTime,, dd.MM.yyyy
     clipboard := ""    
