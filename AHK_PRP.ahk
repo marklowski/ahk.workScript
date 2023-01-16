@@ -5,11 +5,11 @@
 ;
 
 ; Gloabl Variables
-Outlook_TaskBar = 0
-Outlook_UnRead = 0
-Outlook_Calender = 0
-SAP_VersionMain = 0
-SAP_VersionSub = 0
+OutlookTaskBar = 0
+OutlookUnRead = 0
+OutlookCalender = 0
+MainVersion = 0
+SubVersion = 0
 
 ;check / create config file
 Initialize_Script()
@@ -22,17 +22,17 @@ Initialize_Script()
 
 ;Hotkeys for OUTLOOK
 #IfWinActive ahk_exe OUTLOOK.EXE
-    !NumpadEnter::Switch_TaskBar(Outlook_TaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
-    !NumpadDot::Switch_Un_Read(Outlook_UnRead)      ;Switch between Read / Unread
-    !Numpad0::Switch_Calendar(Outlook_Calender)     ;Switch between different Calendar Views
+    !NumpadEnter::Switch_TaskBar(OutlookTaskBar)   ;Switch between Email/ Calendar / Notes / ToDo's
+    !NumpadDot::Switch_Un_Read(OutlookUnRead)      ;Switch between Read / Unread
+    !Numpad0::Switch_Calendar(OutlookCalender)     ;Switch between different Calendar Views
     !Numpad1::Send, ^+1   ;Move eMail to specific Outlook Directory
-    !Numpad3::Send, ^+2   ;Move eMail to specific Outlook Directory
-    !Numpad4::Send, ^+3   ;Move eMail to specific Outlook Directory
-    !Numpad5::Send, ^+4   ;Move eMail to specific Outlook Directory
-    !Numpad6::Send, ^+5   ;Move eMail to specific Outlook Directory
-    !Numpad7::Send, ^+6   ;Move eMail to specific Outlook Directory
-    !Numpad8::SEND, ^+7   ;Move eMail to specific Outlook Directory
-    !Numpad2::Send, ^+8   ;Move eMail to specific Outlook Directory
+    !Numpad2::Send, ^+2   ;Move eMail to specific Outlook Directory
+    !Numpad3::Send, ^+3   ;Move eMail to specific Outlook Directory
+    !Numpad4::Send, ^+4   ;Move eMail to specific Outlook Directory
+    !Numpad5::Send, ^+5   ;Move eMail to specific Outlook Directory
+    !Numpad6::Send, ^+6   ;Move eMail to specific Outlook Directory
+    !Numpad7::Send, ^+7   ;Move eMail to specific Outlook Directory
+    !Numpad8::SEND, ^+8   ;Move eMail to specific Outlook Directory
     !Numpad9::SEND, ^+9   ;Move eMail to specific Outlook Directory
 
 ;Hotkeys for SAP
@@ -46,10 +46,10 @@ Initialize_Script()
     !Numpad7::Send, ^+{F12} ;Set Session Break-Point
     !Numpad8::Send, ^+{F9}  ;Set External Break-Point
     !Numpad9::Send, ^+{F5}  ;Set Objectlist
-    !NumpadDiv::Send_Header("H", SAP_VersionMain, SAP_VersionSub)    ;Set Abap Header
-    !NumpadMult::Send_Header("E", SAP_VersionMain, SAP_VersionSub)   ;Set Abap Header-Entry
-    !NumpadSub::SAP_VersionMain:=SAP_VersionMain+1
-    !NumpadAdd::SAP_VersionSub:=SAP_VersionSub+1
+    !NumpadDiv::Send_Header("H", MainVersion, SubVersion)    ;Set Abap Header
+    !NumpadMult::Send_Header("E", MainVersion, SubVersion)   ;Set Abap Header-Entry
+    !NumpadSub::MainVersion:=MainVersion+1
+    !NumpadAdd::SubVersion:=SubVersion+1
     ^Numpad0::GoTo_Transaction("ex", "N", "Y")      ;Close all Windows for MANDT
     ^Numpad1::GoTo_Transaction("se80", "N", "Y")    ;Go To SE80 Same Window
     ^Numpad2::GoTo_Transaction("se16n", "N", "Y")   ;Go To SE16N Same Window
@@ -135,43 +135,43 @@ Launch_Programs(Program)
     }
 }
 ; Functions for OUTLOOK Hotkeys
-Switch_TaskBar(ByRef Outlook_TaskBar)
+Switch_TaskBar(ByRef OutlookTaskBar)
 {
-    Outlook_TaskBar++
-    if Outlook_TaskBar = 1
+    OutlookTaskBar++
+    if OutlookTaskBar = 1
         Send, ^1
-    else if Outlook_TaskBar = 2
+    else if OutlookTaskBar = 2
         Send, ^2
-    else if Outlook_TaskBar = 3
+    else if OutlookTaskBar = 3
         Send,  ^5
-    else if Outlook_TaskBar = 4
+    else if OutlookTaskBar = 4
     {
         Send, ^4
-        Outlook_TaskBar = 0
+        OutlookTaskBar = 0
     }
 }
 
-Switch_Un_Read(ByRef Outlook_UnRead)
+Switch_Un_Read(ByRef OutlookUnRead)
 {
-    Outlook_UnRead++
-    if Outlook_UnRead = 1
+    OutlookUnRead++
+    if OutlookUnRead = 1
         Send, ^U
-    else if Outlook_UnRead = 2
+    else if OutlookUnRead = 2
     {
-        Send, ^O
-        Outlook_UnRead = 0
+        Send, ^Q
+        OutlookUnRead = 0
     }
 }
 
-Switch_Calendar(ByRef Outlook_Calender)
+Switch_Calendar(ByRef OutlookCalender)
 {
-    Outlook_Calender++
-    if Outlook_Calender = 1
+    OutlookCalender++
+    if OutlookCalender = 1
         Send, ^!2
-    else if Outlook_Calender = 2
+    else if OutlookCalender = 2
     {
         Send, ^!4
-        Outlook_Calender = 0
+        OutlookCalender = 0
     }
 }
 
@@ -203,7 +203,7 @@ GoTo_Transaction(TCode, Modus, Execute)
 }
 
 ;Functions for Header Texts
-Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
+Send_Header(Modus, byref MainVersion, byref SubVersion)
 {
     FormatTime, CurrentDateTime,, dd.MM.yyyy
     clipboard := ""    
@@ -214,13 +214,13 @@ Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
     }
     else if (Modus = "E")
     {
-        if(SAP_VersionMain = 0)
-            SAP_VersionMain = 1
+        if(MainVersion = 0)
+            MainVersion = 1
         
         FileRead, clipboard, sapSubHeader.txt
         StringReplace, clipboard, clipboard, ##CurrentDateTime, %CurrentDateTime%, All
-        StringReplace, clipboard, clipboard, ##MainVersion, %SAP_VersionMain%, All
-        StringReplace, clipboard, clipboard, ##SubVersion, %SAP_VersionSub%, All
+        StringReplace, clipboard, clipboard, ##MainVersion, %MainVersion%, All
+        StringReplace, clipboard, clipboard, ##SubVersion, %SubVersion%, All
     }
 
     ClipWait, 2    
@@ -228,7 +228,7 @@ Send_Header(Modus, byref SAP_VersionMain, byref SAP_VersionSub)
         Send, ^v
     
     Sleep, 300
-    SAP_VersionMain = 0
-    SAP_VersionSub = 0
+    MainVersion = 0
+    SubVersion = 0
     return
 }
