@@ -14,6 +14,9 @@ SubVersion = 0
 ;check / create config file
 initializeScript()
 
+; read Settings File
+readSettings()
+
 #+e::goToFileManagment()   ; Open Downloads folder
 !Numpad1::launchPrograms("SAP")
 !Numpad2::launchPrograms("ECLIPSE")
@@ -82,13 +85,25 @@ initializeScript()
     }
 
     if !FileExist( "Config.txt" ) {
-        FileAppend, FileManagment=`nEclipseVersion=`nVisualStudioWorkspace1=`nVisualStudioWorkspace2=`n, %A_WorkingDir%\Config.txt
+        FileAppend, invertTCode=No`nfileManagment=`neclipseVersion=`nvisualStudioWorkspace1=`nvisualStudioWorkspace2=`n, %A_WorkingDir%\Config.txt
 
         MsgBox, 4, Config File was created,  Open Config File Folder?        
         IfMsgBox, Yes
             Run "%A_WorkingDir%"
     }
 }
+
+readSettings() {
+    global
+
+    ; Config Variables
+    invertTCode:=readConfigParameter("invertTCode")
+    fileManagment:=readConfigParameter("fileManagment")
+    eclipseVersion:=readConfigParameter("eclipseVersion")
+    visualStudioWorkSpace1:=readConfigParameter("visualStudioWorkspace1")
+    visualStudioWorkSpace2:=readConfigParameter("visualStudioWorkspace2")
+}
+
 
 readConfigParameter(Setting)
 {
@@ -108,29 +123,40 @@ readConfigParameter(Setting)
 
 goToFileManagment()
 {
-    Config := Read_Config("FileManagment")
-    Run %Config%
+    global
+    if ( fileManagment = "" )
+        readSettings()
+
+    Run %fileManagment%
     return
 }
 
 launchPrograms(Program)
 {
+    global
+
     switch Program
     {
         case "SAP":
             Run, saplogon.exe
             return
         case "ECLIPSE":
-            eclipseVersion := Read_Config("EclipseVersion")
+            if ( eclipseVersion = "" )
+                readSettings()
+
             Run, C:\Users\%A_UserName%\eclipse\%eclipseVersion%\eclipse\eclipse.exe
             return
         case "WORKSPACE1":
-            WS1Path := Read_Config("VisualStudioWorkspace1")
-            Run, %WS1Path%
+            if ( visualStudioWorkSpace1 = "" )
+                readSettings()
+
+            Run, %visualStudioWorkSpace1%
             return
         case "WORKSPACE2":
-            WS2Path := Read_Config("VisualStudioWorkspace2")
-            Run, %WS2Path%
+            if ( visualStudioWorkSpace2 = "" )
+                readSettings()
+
+            Run, %visualStudioWorkSpace2%
             return
     }
 }
@@ -178,6 +204,22 @@ switchCalendar(ByRef OutlookCalender)
 ;Functions for SAP Hotkeys
 goToTransaction(TCode, Modus, Execute) 
 {
+    global
+    if ( invertTCode = "" )
+        readSettings()
+
+    ; Invert Modus Calls (New/ Same Window), when Settings is active.
+    ; Ignore Setting when TCode 'EX' is called otherwise, execution will be faulty
+    if (invertTcode = "Yes" && TCode != "ex") {
+        switch Modus
+        {
+            case "N":
+                Modus := "O"
+            case "O":
+                Modus := "N"
+        }
+    }
+
     ;Select TCODE SearchBar
     Send, ^+7
     Sleep 10
