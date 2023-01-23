@@ -80,8 +80,8 @@ Beispiel Config.txt
     invertTCode=No
     fileManagment=C:\file.managment
     eclipseVersion=platform-2022-12
-    visualStudioWorkspace1=C:\file.managment\v\visual-studio-code\prp.code-workspace
-    visualStudioWorkspace2=C:\file.managment\v\visual-studio-code\flexus.code-workspace
+    visualStudioWorkspace1=C:\file.managment\v\visual-studio-code\<Name 1>.code-workspace
+    visualStudioWorkspace2=C:\file.managment\v\visual-studio-code\<Name 2>.code-workspace
 ```
 
 ## SAP Header Settings - sapHeader.txt
@@ -96,7 +96,6 @@ Beispiel sapHeader.txt:
 ```ini
 *<D>-------------------------------------------------------------------
 * Autor.........: Philipp von Marklowski
-* Firma.........: Flexus AG
 * Angelegt am...: ##CurrentDateTime
 *----------------------------------------------------------------------
 * Beschreibung:
